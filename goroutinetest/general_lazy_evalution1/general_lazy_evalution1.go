@@ -10,6 +10,7 @@ type EvalFunc func(Any) (Any, Any)
 
 func main() {
 
+	// 实际执行的lambda函数
 	evenFunc := func(state Any) (Any, Any) {
 
 		fmt.Printf("Call evenFunc, state address is %p\n", &state)
@@ -26,7 +27,13 @@ func main() {
 	}
 }
 
-// BuildLazyEvaluator is a function
+// BuildLazyEvaluator 共通的惰性生成器
+// evalFunc是传入的函数，initState则是传入生成器的初始值（可以为任意值）
+// 在惰性生成器中创建了一个通道retValChan
+// 两个匿名函数loopFunc和retFunc，loopFunc函数在协程中调用，retFunc函数则用于返回
+// loopFunc函数被创建为协程。在一个无限循环中获取传入函数的计算结果，并将其中一个计算结果放入retValChan通道内
+// retFunc是一个从retValChan通道获取数据的函数。如果该函数不被调用，retValChan通道将被阻塞。
+//
 func BuildLazyEvaluator(evalFunc EvalFunc, initState Any) func() Any {
 
 	retValChan := make(chan Any)
