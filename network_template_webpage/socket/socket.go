@@ -26,6 +26,21 @@ func main() {
 		return
 	}
 
+	// conn对象实现了io.Writer接口的write方法
+	if sv, ok := conn.(io.Writer); ok {
+
+		fmt.Println("conn implements io.Writer interface.")
+		fmt.Println(sv)
+	}
+
+	// conn对象实现了net.Conn接口的write方法
+	if sv, ok := conn.(net.Conn); ok {
+
+		fmt.Println("conn implements net.Conn interface.")
+		fmt.Println(sv)
+	}
+
+	// 在WriteString方法中调用了io.Writer接口的write方法，如果不是write方法，则无法将conn对象作为参数传递给io.WriteString
 	io.WriteString(conn, msg)
 
 	for read {
